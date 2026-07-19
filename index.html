@@ -54,7 +54,6 @@ main{flex:1 0 auto;display:flex;flex-direction:column;justify-content:center;pad
 .btn:active{transform:translateY(0)}
 .btn:disabled{opacity:.6;cursor:default;transform:none}
 .btn:focus-visible,.erow input:focus-visible,.linkbtn:focus-visible,.card:focus-visible,.fulldraft:focus-visible{outline:3px solid var(--red);outline-offset:3px}
-.privacy{margin:16px 0 0;font-size:13px;color:var(--g3);line-height:1.5;max-width:44ch}
 .msg{margin:14px 0 0;font-size:14px;min-height:20px}
 .msg.err{color:var(--red-deep);font-weight:600;padding:10px 14px;border-radius:10px;background:rgba(227,10,11,.06);border:1px solid rgba(227,10,11,.18)}
 
@@ -90,7 +89,7 @@ main{flex:1 0 auto;display:flex;flex-direction:column;justify-content:center;pad
   padding:18px 44px 18px 20px;min-height:104px;box-shadow:var(--shadow);cursor:pointer;
   transition:transform .16s var(--ease),box-shadow .16s var(--ease),border-color .16s var(--ease)}
 .docket .card::after{content:"";position:absolute;left:-35px;top:24px;width:16px;height:16px;border-radius:50%;
-  background:var(--pc);box-shadow:0 0 0 4px var(--canvas)}
+  background:var(--pc);box-shadow:inset 0 1px 1.5px rgba(255,255,255,.5),0 0 0 4px var(--canvas),0 3px 8px -3px rgba(20,18,20,.18)}
 .docket .card .cp::before{display:none}
 .card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--pc)}
 .card:active{transform:translateY(-1px)}
@@ -192,6 +191,11 @@ body{font-size:17px}
 .hownote-list li{padding-left:2px}
 .yl{background:#FBE7A2;color:#4d3f00;padding:0 5px;border-radius:3px;font-weight:600}
 .hownote-deadline{margin:0 0 16px;padding:11px 15px;border:1px solid var(--rule);border-left:3px solid var(--red);border-radius:10px;background:var(--canvas);color:var(--ink);font-weight:600;font-size:14.5px}
+.hownote-h .roll{display:inline-block;color:var(--red)}
+.hownote-h .roll-w{display:inline-block;transition:transform .28s var(--ease),opacity .28s var(--ease)}
+.hownote-h .roll-w.out{opacity:0;transform:translateY(-.45em)}
+.hownote-h .roll-w.in{opacity:0;transform:translateY(.45em)}
+.vh{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 
 @media(max-width:520px){
   .brandbar-tag{display:none}
@@ -228,6 +232,16 @@ body{font-size:17px}
   animation:spineCharge 1.05s var(--ease) .85s 1 backwards}
 @keyframes spineCharge{from{background-position:0 -46px}to{background-position:0 calc(100% + 46px)}}
 
+/* lifecycle markers: bigger, lit discs; the charge flows behind them; numeral readable beside */
+.spine{padding-left:44px}
+.spine::before{left:13px;z-index:0}
+.spine::after{left:13px;z-index:1}
+.ph{gap:15px;padding:11px 0;align-items:center;position:relative;z-index:2}
+.ph .dot{left:-41px;width:22px;height:22px;z-index:2;
+  box-shadow:inset 0 1px 1.5px rgba(255,255,255,.5),0 0 0 4px var(--canvas),0 3px 8px -3px rgba(20,18,20,.18)}
+.ph .rn{color:var(--ink);font-size:14px;width:24px;opacity:.9}
+.ph .nm{font-size:17px}
+
 @media(prefers-reduced-motion:reduce){
   .aura{animation:none;opacity:.68}
   .h1 .w>i{animation:none;transform:none;opacity:1}
@@ -258,12 +272,11 @@ body{font-size:17px}
           <form class="efield" id="form" novalidate>
             <label for="email">Your work email</label>
             <div class="erow">
-              <input id="email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="name@rodekors.dk" aria-describedby="privacy msg" required>
+              <input id="email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="name@rodekors.dk" aria-describedby="msg" required>
               <button class="btn" id="go" type="submit">Find my SOPs</button>
             </div>
             <p class="msg" id="msg" role="status" aria-live="polite"></p>
           </form>
-          <p class="privacy" id="privacy">This page shows only the SOPs assigned to you. Each one opens on the Danish Red Cross SharePoint with your normal login, exactly as usual.</p>
         </div>
 
         <div class="aside" aria-hidden="true">
@@ -282,7 +295,7 @@ body{font-size:17px}
       <p class="rlead" id="rlead"></p>
       <div class="docket" id="cards"></div>
       <div class="hownote">
-        <h3 class="hownote-h">How to review</h3>
+        <h3 class="hownote-h">Add your <span class="roll" id="roll" aria-hidden="true"><span class="roll-w">review</span></span><span class="vh">review, edits, feedback, and suggestions</span></h3>
         <p class="hownote-deadline" id="deadline" hidden></p>
         <ul class="hownote-list">
           <li>Each SOP opens on the Danish Red Cross SharePoint in a new tab, using your normal login.</li>
@@ -453,8 +466,8 @@ if(brandhome){ brandhome.addEventListener("click", function(e){
 }); }
 
 // review deadline: set DEADLINE (e.g. "8 August 2026") to show the line in "How to review"
-var DEADLINE = "";
-(function(){ var el=document.getElementById("deadline"); if(el && DEADLINE){ el.textContent="Please add your review by "+DEADLINE+"."; el.hidden=false; } })();
+var DEADLINE = "31 July 2026";
+(function(){ var el=document.getElementById("deadline"); if(el && DEADLINE){ el.textContent="Please share your review by "+DEADLINE+"."; el.hidden=false; } })();
 
 // headline: resolve the words up in sequence, only when motion is welcome (plain headline otherwise)
 (function(){
@@ -470,6 +483,25 @@ var DEADLINE = "";
     s.appendChild(inner); h1.appendChild(s);
     if(i<words.length-1){ h1.appendChild(document.createTextNode(" ")); }
   });
+})();
+
+// review note: roll the action word (review -> edits -> feedback -> suggestions)
+(function(){
+  var el=document.getElementById("roll"); if(!el) return;
+  var inner=el.querySelector(".roll-w"); if(!inner) return;
+  var words=["review","edits","feedback","suggestions"];
+  if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches){ inner.textContent=words[0]; return; }
+  var i=0, timer=setInterval(function(){
+    if(document.hidden) return;
+    i=(i+1)%words.length;
+    inner.classList.add("out");
+    setTimeout(function(){
+      inner.textContent=words[i];
+      inner.classList.remove("out"); inner.classList.add("in");
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ inner.classList.remove("in"); }); });
+    },300);
+    if(i===0){ clearInterval(timer); }   // one full pass shown, then rest on "review"
+  },2600);
 })();
 </script>
 </body>
