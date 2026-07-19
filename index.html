@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23E30A0B'/%3E%3Crect x='14.5' y='7' width='3' height='18' rx='1.5' fill='%23fff' opacity='.92'/%3E%3C/svg%3E">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src https://sop-review.ankommer.workers.dev; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
 <title>International Finance SOPs, Draft 0 review</title>
 <style>
@@ -196,9 +197,47 @@ body{font-size:17px}
   .brandbar-tag{display:none}
   .logo{height:46px}
 }
+
+/* ===== elevation: the lifecycle powers on (restraint over spectacle) ===== */
+/* one soft light source, felt not seen, behind the lifecycle and never under text */
+.aura{position:fixed;top:-16%;right:-10%;width:min(58vw,680px);height:min(58vw,680px);border-radius:50%;pointer-events:none;z-index:0;opacity:0;
+  background:radial-gradient(circle at center,rgba(227,10,11,.075),rgba(227,10,11,.03) 46%,transparent 70%);
+  animation:auraIn 1.6s var(--ease) .2s forwards}
+@keyframes auraIn{to{opacity:1}}
+
+/* headline: words resolve up in sequence (JS wraps words only when motion is allowed) */
+.h1 .w{display:inline-block}
+.h1 .w>i{display:inline-block;font-style:inherit;animation:wordUp .7s var(--ease) backwards;animation-delay:calc(.1s + var(--wi,0)*.05s)}
+@keyframes wordUp{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}
+
+/* docket nodes resolve, calm, as each SOP attaches to the lifecycle */
+.docket .card::after{transition:box-shadow .3s var(--ease)}
+.docket .card.in::after{animation:nodeResolve .85s var(--ease);animation-delay:calc(var(--i,0)*70ms + .05s)}
+@keyframes nodeResolve{0%{transform:scale(.35);opacity:.25}60%{transform:scale(1.04)}100%{transform:scale(1);opacity:1}}
+@media(hover:hover) and (pointer:fine){
+  .docket .card:hover::after{box-shadow:0 0 0 4px var(--canvas),0 0 12px 1px var(--pc)}
+}
+
+/* tactile press (physical, not gimmicky) */
+.btn:active{transform:scale(.98)}
+.fulldraft:active{transform:scale(.98)}
+
+/* signature: a single charge of light travels down the lifecycle as it powers on, then rests */
+.spine::after{content:"";position:absolute;left:12px;top:10px;bottom:10px;width:2px;border-radius:2px;pointer-events:none;
+  background:linear-gradient(to bottom,transparent,rgba(255,255,255,.92),transparent) 0 -46px/100% 46px no-repeat;
+  animation:spineCharge 1.05s var(--ease) .85s 1 backwards}
+@keyframes spineCharge{from{background-position:0 -46px}to{background-position:0 calc(100% + 46px)}}
+
+@media(prefers-reduced-motion:reduce){
+  .aura{animation:none;opacity:.68}
+  .h1 .w>i{animation:none;transform:none;opacity:1}
+  .docket .card.in::after{animation:none}
+  .spine::after{display:none}
+}
 </style>
 </head>
 <body>
+<div class="aura" aria-hidden="true"></div>
 <div class="flecks" aria-hidden="true"><i class="fleck"></i><i class="fleck"></i><i class="fleck"></i><i class="fleck"></i><i class="fleck"></i><i class="fleck"></i><i class="fleck"></i></div>
 <div class="topbar"></div>
 <header class="brandbar"><div class="wrap">
@@ -416,6 +455,22 @@ if(brandhome){ brandhome.addEventListener("click", function(e){
 // review deadline: set DEADLINE (e.g. "8 August 2026") to show the line in "How to review"
 var DEADLINE = "";
 (function(){ var el=document.getElementById("deadline"); if(el && DEADLINE){ el.textContent="Please add your review by "+DEADLINE+"."; el.hidden=false; } })();
+
+// headline: resolve the words up in sequence, only when motion is welcome (plain headline otherwise)
+(function(){
+  var h1=document.getElementById("h1");
+  if(!h1) return;
+  if(!window.matchMedia || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var words=h1.textContent.trim().split(/\s+/);
+  if(words.length<2) return;
+  h1.textContent="";
+  words.forEach(function(w,i){
+    var s=document.createElement("span"); s.className="w";
+    var inner=document.createElement("i"); inner.textContent=w; inner.style.setProperty("--wi",i);
+    s.appendChild(inner); h1.appendChild(s);
+    if(i<words.length-1){ h1.appendChild(document.createTextNode(" ")); }
+  });
+})();
 </script>
 </body>
 </html>
